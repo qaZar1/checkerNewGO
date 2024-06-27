@@ -1,0 +1,179 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Go Users
+  description: |
+    %README.md%
+
+tags:
+  - name: get
+    x-displayName: Получение
+  - name: add
+    x-displayName: Добавление
+  - name: remove
+    x-displayName: Удаление
+
+paths:
+  "/api/users/add":
+    post:
+      tags:
+        - add
+      summary: Добавление нового юзера в БД
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        "204":
+          description: Данные добавлены в БД
+        "400":
+          description: Ошибка валидации входных данных
+        "401":
+          description: Ошибка авторизации
+        "500":
+          description: Внутренняя ошибка сервиса
+
+  "/api/users/{chat_id}/remove":
+    delete:
+      tags:
+        - remove
+      summary: Удаление пользователя из БД
+      parameters:
+        - name: chat_id
+          in: path
+          description: Идентификатор пользователя
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: Данные удалены из БД
+        "400":
+          description: Ошибка валидации входных данных
+        "401":
+          description: Ошибка авторизации
+        "500":
+          description: Внутренняя ошибка сервиса
+    
+  "/api/users/get":
+    get:
+      tags:
+        - get
+      summary: Получение всех пользователей из БД
+      responses:
+        "200":
+          description: Данные пользователей
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Results'
+        "400":
+          description: Ошибка валидации входных данных
+        "401":
+          description: Ошибка авторизации
+        "500":
+          description: Внутренняя ошибка сервиса
+
+  "/api/users/{chat_id}/get":
+    get:
+      tags:
+        - get
+      summary: Получение данных пользователя по chat_id
+      parameters:
+        - name: chat_id
+          in: path
+          description: Идентификатор пользователя
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Данные пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        "400":
+          description: Ошибка валидации входных данных
+        "401":
+          description: Ошибка авторизации
+        "500":
+          description: Внутренняя ошибка сервиса
+
+components:
+  schemas:
+    User:
+      type: object
+      description: Данные пользователя
+      required:
+        - chat_id
+        - username
+      properties:
+        chat_id:
+          type: integer
+          format: int64
+          description: Chat_id пользователя
+        username:
+          type: string
+          description: Username пользователя
+        name:
+          type: string
+          description: Имя пользователя
+      
+    Results:
+      type: object
+      description: Данные пользователей
+      required:
+        - users
+      properties:
+        users:
+          type: array
+          items:
+            description: Данные пользователей
+            $ref: '#/components/schemas/Info'
+          
+    Info:
+      type: object
+      description: Данные
+      required:
+        - chat_id
+        - username
+      properties:  
+        chat_id:
+          type: integer
+          format: int64
+          description: Уникальный id чата с пользователем
+          x-oapi-codegen-extra-tags:
+            db: chat_id
+        username:
+          type: string
+          description: Username пользователя
+          x-oapi-codegen-extra-tags:
+            db: username
+        name:
+          type: string
+          description: Имя пользователя
+          x-oapi-codegen-extra-tags:
+            db: name
+
+    Result:
+      type: object
+      description: Данные пользователя
+      required:
+        - chat_id
+        - username
+      properties:
+        chat_id:
+          type: integer
+          format: int64
+          description: Уникальный id чата с пользователем
+        username:
+          type: string
+          description: Username пользователя
+        name:
+          type: string
+          description: Имя пользователя
