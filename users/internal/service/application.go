@@ -32,7 +32,7 @@ func (app *Application) GetUserByChatID(chatId int64) (*autogen.Info, error) {
 
 	var users autogen.Info
 	if err := app.db.Get(&users, query, chatId); err != nil {
-		return nil, fmt.Errorf("Invalid SELECT main.users: %s", err)
+		return nil, fmt.Errorf("User does not exist in main.users: %w", err)
 	}
 
 	return &users, nil
