@@ -1,6 +1,8 @@
 package service
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -61,7 +63,12 @@ func (transport *Transport) DeleteApiUsersChatIdRemove(w http.ResponseWriter, r 
 func (transport *Transport) GetApiUsersChatIdGet(w http.ResponseWriter, r *http.Request, chatId int64) {
 	user, err := transport.app.GetUserByChatID(chatId)
 	if err != nil {
-		utils.WriteString(w, http.StatusInternalServerError, err, "Не удалось получить пользователя")
+		if errors.Is(err, sql.ErrNoRows) {
+			utils.WriteNoContent(w)
+			return
+		}
+
+		utils.WriteString(w, http.StatusNoContent, err, "Не удалось получить пользователя")
 		return
 	}
 
