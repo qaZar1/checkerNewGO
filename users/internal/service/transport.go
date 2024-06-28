@@ -14,12 +14,12 @@ import (
 )
 
 type Transport struct {
-	app *Application
+	srv *Service
 }
 
 func NewTransport(db *sqlx.DB) autogen.ServerInterface {
 	return &Transport{
-		app: NewApplication(db),
+		srv: NewService(db),
 	}
 }
 
@@ -36,7 +36,7 @@ func (transport *Transport) PostApiUsersAdd(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	if err := transport.app.AddUser(user); err != nil {
+	if err := transport.srv.db.AddUser(user); err != nil {
 		utils.WriteString(w, http.StatusInternalServerError, err, "Не удалось добавить пользователя")
 		return
 	}
@@ -45,7 +45,7 @@ func (transport *Transport) PostApiUsersAdd(w http.ResponseWriter, r *http.Reque
 }
 
 func (transport *Transport) DeleteApiUsersChatIdRemove(w http.ResponseWriter, r *http.Request, chatId int64) {
-	ok, err := transport.app.RemoveUser(chatId)
+	ok, err := transport.srv.RemoveUser(chatId)
 	if err != nil {
 		utils.WriteString(w, http.StatusInternalServerError, err, "Пользователя не существует")
 		return
@@ -61,7 +61,7 @@ func (transport *Transport) DeleteApiUsersChatIdRemove(w http.ResponseWriter, r 
 }
 
 func (transport *Transport) GetApiUsersChatIdGet(w http.ResponseWriter, r *http.Request, chatId int64) {
-	user, err := transport.app.GetUserByChatID(chatId)
+	user, err := transport.srv.GetUserByChatID(chatId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			utils.WriteNoContent(w)
@@ -76,7 +76,7 @@ func (transport *Transport) GetApiUsersChatIdGet(w http.ResponseWriter, r *http.
 }
 
 func (transport *Transport) GetApiUsersGet(w http.ResponseWriter, r *http.Request) {
-	users, err := transport.app.GetAllUsers()
+	users, err := transport.srv.GetAllUsers()
 	if err != nil {
 		utils.WriteString(w, http.StatusInternalServerError, err, "Не удалось получить пользователей")
 		return
