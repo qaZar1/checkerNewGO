@@ -2,8 +2,8 @@ package service
 
 import (
 	"github.com/jmoiron/sqlx"
-	"github.com/qaZar1/checkerNewGO/users/autogen"
 	"github.com/qaZar1/checkerNewGO/users/internal/database"
+	"github.com/qaZar1/checkerNewGO/users/internal/models"
 )
 
 type Service struct {
@@ -16,15 +16,15 @@ func NewService(db *sqlx.DB) *Service {
 	}
 }
 
-func (srv *Service) GetAllUsers() ([]autogen.Info, error) {
+func (srv *Service) GetAllUsers() ([]models.User, error) {
 	return srv.db.GetAllUsers()
 }
 
-func (srv *Service) GetUserByChatID(chatId int64) (*autogen.Info, error) {
+func (srv *Service) GetUserByChatID(chatId int64) (models.User, error) {
 	return srv.db.GetUserByChatID(chatId)
 }
 
-func (srv *Service) AddUser(user autogen.User) error {
+func (srv *Service) AddUser(user models.User) error {
 	return srv.db.AddUser(user)
 }
 

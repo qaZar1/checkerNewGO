@@ -4,18 +4,18 @@ tasks:
   mock-gen:
     desc: Генерация мок
     vars:
-      ROOT_DIR: users
+      ROOT_DIR: versions
     cmds:
      - mockgen -source={{.ROOT_DIR}}/internal/service/interface.go -destination={{.ROOT_DIR}}/internal/mocks/mock_service.go -package=mocks
 
   swagger:
     desc: Генерация сваггера
     vars:
-      DOCS: users/autogen/server
+      DOCS: versions/autogen/server
     cmds:
-     - swag init --parseDependency -d users,users/internal/service -o {{.DOCS}} -g main.go
+     - swag init --parseDependency -d versions,versions/internal/service -o {{.DOCS}} -g main.go
 # Подготавливаем данные для подключения в docs.go
-     - cat users/README.md | sed 's/"/\\"/g' > {{.DOCS}}/README.md
+     - cat versions/README.md | sed 's/"/\\"/g' > {{.DOCS}}/README.md
      - awk -F/ '{print "\"" $0 "\\n\"+"}' {{.DOCS}}/README.md > {{.DOCS}}/README.data
      - sed -i -e '1 s/^/ Description:/;' {{.DOCS}}/README.data
      - echo "\"\"," >> {{.DOCS}}/README.data
@@ -30,9 +30,9 @@ tasks:
   generate:
     desc: Генерация сваггера
     vars:
-      DOCS: users/autogen/server
+      DOCS: versions/autogen/server
     cmds:
-     - oapi-codegen --config=users/config/codegen.yml {{.DOCS}}/swagger.yaml
+     - oapi-codegen --config=versions/config/codegen.yml {{.DOCS}}/swagger.yaml
      
   autogen:
     desc: Автогенерация OpenAPI 3
@@ -42,7 +42,7 @@ tasks:
   oapi3-code-gen:
     desc: Автогенерация интерфейсов OpenAPI 3
     vars:
-      ROOT_DIR: users
+      ROOT_DIR: versions
       AUTOGEN_DIR: autogen
     cmds:
       - cd {{.ROOT_DIR}} && mkdir -p {{.AUTOGEN_DIR}}
@@ -55,7 +55,7 @@ tasks:
   oapi3-doc-gen:
     desc: Автогенерация документации OpenAPI 3
     vars:
-      ROOT_DIR: users
+      ROOT_DIR: versions
       AUTOGEN_DIR: autogen/docs
     cmds:
       - cd {{.ROOT_DIR}} && redoc-cli build {{.AUTOGEN_DIR}}/oapi3.yaml -o {{.AUTOGEN_DIR}}/user-doc.html
@@ -65,7 +65,7 @@ tasks:
 
   oapi3-yaml-gen:
     vars:
-      ROOT_DIR: users
+      ROOT_DIR: versions
       AUTOGEN_DIR: autogen/docs
     cmds:
       - cd {{.ROOT_DIR}} && mkdir -p {{.AUTOGEN_DIR}}

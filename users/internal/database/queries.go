@@ -5,7 +5,7 @@ import (
 
 	_ "github.com/Impisigmatus/service_core/postgres"
 	"github.com/jmoiron/sqlx"
-	"github.com/qaZar1/checkerNewGO/users/autogen"
+	"github.com/qaZar1/checkerNewGO/users/internal/models"
 )
 
 type Database struct {
@@ -18,10 +18,10 @@ func NewDatabase(db *sqlx.DB) *Database {
 	}
 }
 
-func (pg *Database) GetAllUsers() ([]autogen.Info, error) {
+func (pg *Database) GetAllUsers() ([]models.User, error) {
 	const query = "SELECT chat_id, username, name FROM main.users;"
 
-	var users []autogen.Info
+	var users []models.User
 	if err := pg.db.Select(&users, query); err != nil {
 		return nil, fmt.Errorf("Invalid SELECT main.users: %s", err)
 	}
@@ -29,25 +29,25 @@ func (pg *Database) GetAllUsers() ([]autogen.Info, error) {
 	return users, nil
 }
 
-func (pg *Database) GetUserByChatID(chatId int64) (*autogen.Info, error) {
+func (pg *Database) GetUserByChatID(chatId int64) (models.User, error) {
 	const query = "SELECT chat_id, username, name FROM main.users WHERE chat_id = $1;"
 
-	var users autogen.Info
-	if err := pg.db.Get(&users, query, chatId); err != nil {
-		return nil, fmt.Errorf("User does not exist in main.users: %w", err)
+	var user models.User
+	if err := pg.db.Get(&user, query, chatId); err != nil {
+		return models.User{}, fmt.Errorf("User does not exist in main.users: %w", err)
 	}
 
-	return &users, nil
+	return user, nil
 }
 
-func (pg *Database) AddUser(user autogen.User) error {
+func (pg *Database) AddUser(user models.User) error {
 	const query = `
 INSERT INTO main.users (
 	chat_id,
 	username,
 	name
 ) VALUES (
-	:chatid,
+	:chat_id,
 	:username,
 	:name
 ) ON CONFLICT (chat_id) DO NOTHING;`

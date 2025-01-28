@@ -16,8 +16,8 @@ import (
 	"github.com/Impisigmatus/service_core/postgres"
 	"github.com/go-chi/chi/v5"
 	"github.com/jmoiron/sqlx"
-	"github.com/qaZar1/checkerNewGO/users/autogen/server"
-	"github.com/qaZar1/checkerNewGO/users/internal/service"
+	"github.com/qaZar1/checkerNewGO/versions/autogen/server"
+	"github.com/qaZar1/checkerNewGO/versions/internal/service"
 	"github.com/sirupsen/logrus"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -34,10 +34,10 @@ func init() {
 	})
 }
 
-// @title Users API
+// @title Versions API
 // @version 3.0
 // @description %README_FILE%
-// @host localhost:8000
+// @host localhost:8001
 // @BasePath /api
 func main() {
 	const (
@@ -72,11 +72,8 @@ func main() {
 
 	router := chi.NewRouter()
 	router.Handle("/api/*",
-		middlewares.Use(
-			middlewares.Use(
-				server.Handler(transport),
-				middlewares.Authorization(strings.Split(os.Getenv(auth), ",")),
-			),
+		middlewares.Use(middlewares.Use(server.Handler(transport),
+			middlewares.Authorization(strings.Split(os.Getenv(auth), ","))),
 			middlewares.Logger(),
 		),
 	)

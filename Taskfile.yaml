@@ -3,6 +3,8 @@ version: 3
 includes:
   users:
     taskfile: users/Taskfile.users.yaml
+  versions:
+    taskfile: versions/Taskfile.versions.yaml
 
 tasks:
   default:
