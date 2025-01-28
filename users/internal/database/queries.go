@@ -22,6 +22,7 @@ func (pg *Database) GetAllUsers() ([]models.User, error) {
 	const query = "SELECT chat_id, username, name FROM main.users;"
 
 	var users []models.User
+
 	if err := pg.db.Select(&users, query); err != nil {
 		return nil, fmt.Errorf("Invalid SELECT main.users: %s", err)
 	}
