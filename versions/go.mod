@@ -1,4 +1,4 @@
-module github.com/qaZar1/checkerNewGO/users
+module github.com/qaZar1/checkerNewGO/versions
 
 go 1.23.0
 

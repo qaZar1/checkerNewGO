@@ -1,0 +1,204 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Go Versions
+  description: |
+    %README.md%
+
+tags:
+  - name: get
+    x-displayName: Получение
+  - name: add
+    x-displayName: Добавление
+  - name: update
+    x-displayName: Обновление
+  - name: remove
+    x-displayName: Удаление
+
+paths:
+  "/api/go/add":
+    post:
+      tags:
+        - add
+      summary: Добавление новой версии Go в БД
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Go'
+      responses:
+        "204":
+          description: Данные добавлены в БД
+        "400":
+          description: Ошибка валидации входных данных
+        "401":
+          description: Ошибка авторизации
+        "500":
+          description: Внутренняя ошибка сервиса
+
+  "/api/go/{version_go}/remove":
+    delete:
+      tags:
+        - remove
+      summary: Удаление версии из БД
+      parameters:
+        - name: version_go
+          in: path
+          description: Идентификатор версии
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Данные удалены из БД
+        "400":
+          description: Ошибка валидации входных данных
+        "401":
+          description: Ошибка авторизации
+        "500":
+          description: Внутренняя ошибка сервиса
+    
+  "/api/go/{version_go}/update":
+    put:
+      tags:
+        - update
+      summary: Обновление данных версии
+      parameters:
+        - name: version_go
+          in: path
+          description: Уникальный номер версии
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Go'
+      responses:
+        "204":
+          description: Данные обновлены
+        "400":
+          description: Ошибка валидации входных данных
+        "401":
+          description: Ошибка авторизации
+        "500":
+          description: Внутренняя ошибка сервиса
+
+  "/api/go/versions":
+    get:
+      tags:
+        - get
+      summary: Получение всех версий из БД
+      responses:
+        "200":
+          description: Данные версий
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Results'
+        "400":
+          description: Ошибка валидации входных данных
+        "401":
+          description: Ошибка авторизации
+        "500":
+          description: Внутренняя ошибка сервиса
+
+  "/api/go/{version_go}/get":
+    get:
+      tags:
+        - get
+      summary: Получение данных версии по version
+      parameters:
+        - name: version_go
+          in: path
+          description: Идентификатор версии
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Данные версии
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Info'
+        "400":
+          description: Ошибка валидации входных данных
+        "401":
+          description: Ошибка авторизации
+        "500":
+          description: Внутренняя ошибка сервиса
+
+components:
+  schemas:
+    Go:
+      type: object
+      description: Данные версии
+      required:
+        - version_go
+        - description
+      properties:
+        version_go:
+          type: string
+          description: Версия Go
+        description:
+          type: string
+          description: Описание версии
+        description_ru:
+          type: string
+          description: Описание версии на русском
+      
+    Results:
+      type: object
+      description: Данные версий
+      properties:
+        versions:
+          type: array
+          items:
+            description: Данные версий
+            $ref: '#/components/schemas/Info'
+          
+    Info:
+      type: object
+      description: Данные версии
+      required:
+        - version_go
+        - description
+        - description_ru
+      properties:  
+        version_go:
+          type: string
+          description: Уникальная версия Go
+          x-oapi-codegen-extra-tags:
+            db: version_go
+        description:
+          type: string
+          description: Описание версии
+          x-oapi-codegen-extra-tags:
+            db: description
+        description_ru:
+          type: string
+          description: Описание версии на русском
+          x-oapi-codegen-extra-tags:
+            db: description_ru
+        
+    Result:
+      type: object
+      description: Данные версии
+      required:
+        - version_go
+        - description
+        - description_ru
+      properties:
+        version_go:
+          type: string
+          description: Версия Go
+        description:
+          type: string
+          description: Описание версии
+        description_ru:
+          type: string
+          description: Описание версии на русском

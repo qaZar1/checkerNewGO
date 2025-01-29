@@ -1,0 +1,62 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Go API
+  description: |
+    %README.md%
+
+tags:
+  - name: get
+    x-displayName: Получение
+
+paths:   
+  "/api/get":
+    get:
+      tags:
+        - get
+      summary: Получение всех версий и их описания
+      responses:
+        "200":
+          description: Данные версий
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Results'
+        "400":
+          description: Ошибка валидации входных данных
+        "401":
+          description: Ошибка авторизации
+        "500":
+          description: Внутренняя ошибка сервиса
+
+components:
+  schemas:      
+    Results:
+      type: object
+      description: Данные пользователей
+      required:
+        - versions
+      properties:
+        versions:
+          type: array
+          items:
+            description: Данные пользователей
+            $ref: '#/components/schemas/Info'
+          
+    Info:
+      type: object
+      description: Данные
+      required:
+        - version
+        - description
+      properties:  
+        version:
+          type: string
+          description: Версия Go
+          x-oapi-codegen-extra-tags:
+            db: version
+        description:
+          type: string
+          description: Описание обновления
+          x-oapi-codegen-extra-tags:
+            db: description
