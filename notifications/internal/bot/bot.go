@@ -24,7 +24,6 @@ type Reciever struct {
 
 func NewBot(token string, api *api.API) *Bot {
 	log.Init(log.LevelInfo)
-	log.Info("Hui")
 	return &Bot{
 		botTG: telegram.New(token, &Reciever{
 			duration: 5 * time.Second,
