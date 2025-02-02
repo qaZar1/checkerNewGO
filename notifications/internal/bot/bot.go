@@ -19,10 +19,10 @@ type Bot struct {
 type Reciever struct {
 	duration time.Duration
 	offset   int
-	api      *api.API
+	api      *api.APIUsers
 }
 
-func NewBot(token string, api *api.API) *Bot {
+func NewBot(token string, api *api.APIUsers) *Bot {
 	log.Init(log.LevelInfo)
 	return &Bot{
 		botTG: telegram.New(token, &Reciever{
@@ -49,17 +49,31 @@ func (reciever *Reciever) Handle(payload *tg_bot.Message) (*tg_bot.MessageConfig
 		logrus.Errorf("Invalid get user by chat id: %s", err)
 	}
 	if !ok {
-		_, err := reciever.api.AddUser(models.User{
-			Chat_ID:  payload.From.ID,
-			Username: payload.From.UserName,
-			Name:     payload.From.FirstName,
-		})
+		reply, err := reciever.authorization(payload)
 		if err != nil {
-			logrus.Errorf("Invalid add user: %s", err)
+			return nil, err
 		}
+		return reply, nil
 	}
 
-	reply := tg_bot.NewMessage(payload.Chat.ID, payload.Text)
+	return nil, nil
+}
 
-	return &reply, nil
+func (reciever *Reciever) authorization(payload *tg_bot.Message) (*tg_bot.MessageConfig, error) {
+	ok, err := reciever.api.AddUser(models.User{
+		Chat_ID:  payload.From.ID,
+		Username: payload.From.UserName,
+		Name:     payload.From.FirstName,
+	})
+	if err != nil {
+		logrus.Errorf("Invalid add user: %s", err)
+	}
+
+	if ok {
+		reply := tg_bot.NewMessage(payload.Chat.ID, "Вы успешно зарегистрировались в боте. Теперь вам будут приходить уведомления о появлении новых версий языка Go.")
+		return &reply, nil
+	} else {
+		reply := tg_bot.NewMessage(payload.Chat.ID, "Произошла ошибка при регистрации")
+		return &reply, err
+	}
 }

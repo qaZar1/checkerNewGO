@@ -29,7 +29,7 @@ func main() {
 		address = "ADDRESS"
 	)
 
-	go bot.NewBot(os.Getenv(token), api.NewApi("http://localhost:8000/api"))
+	go bot.NewBot(os.Getenv(token), api.NewAPIUsers("http://localhost:8000/api"))
 	// router := http.NewServeMux()
 	// router.Handle("/telegram/", httpSwagger.Handler())
 
@@ -61,4 +61,6 @@ func main() {
 	// }
 
 	// go bot.NewBot(os.Getenv(token), nil)
+
+	select {}
 }
