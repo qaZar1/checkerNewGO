@@ -18,7 +18,9 @@ func NewDatabase(db *sqlx.DB) *Database {
 }
 
 func (pg *Database) GetAllVersions() ([]models.Version, error) {
-	const query = "SELECT version, description, description_ru FROM main.versions;"
+	const query = `
+SELECT version, description, description_ru, release_date
+FROM main.versions;`
 
 	var versions []models.Version
 	if err := pg.db.Select(&versions, query); err != nil {
@@ -29,7 +31,11 @@ func (pg *Database) GetAllVersions() ([]models.Version, error) {
 }
 
 func (pg *Database) GetVersionByID(version_str string) (models.Version, error) {
-	const query = "SELECT version, description, description_ru FROM main.versions WHERE version = $1;"
+	const query = `
+SELECT version, description, description_ru, release_date
+FROM main.versions
+WHERE version = $1;
+`
 
 	var version models.Version
 	if err := pg.db.Get(&version, query, version_str); err != nil {
@@ -44,11 +50,13 @@ func (pg *Database) AddVersion(version models.Version) error {
 INSERT INTO main.versions (
 	version,
 	description,
-	description_ru
+	description_ru,
+	release_date
 ) VALUES (
 	:version,
 	:description,
-	:description_ru
+	:description_ru,
+	:release_date
 ) ON CONFLICT (version) DO NOTHING;`
 
 	if _, err := pg.db.NamedExec(query, version); err != nil {
@@ -78,7 +86,8 @@ func (pg *Database) UpdateVersion(version models.Version) (bool, error) {
 	const query = `
 UPDATE main.versions
 SET description = :description,
-	description_ru = :description_ru
+	description_ru = :description_ru,
+	release_date = :releasedate
 WHERE version = :version;`
 
 	exec, err := pg.db.NamedExec(query, version)

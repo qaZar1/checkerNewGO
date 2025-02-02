@@ -25,18 +25,13 @@ func init() {
 
 func main() {
 	const (
-		token = "TOKEN"
+		token   = "TOKEN"
+		address = "ADDRESS"
 	)
 
-	go bot.NewBot(os.Getenv(token), api.NewApi("http://localhost:8000/api"))
-
+	go bot.NewBot(os.Getenv(token), api.NewAPIUsers("http://localhost:8000/api"))
 	// router := http.NewServeMux()
-	// router.Handle("/telegram/",
-	// 	middlewares.Use(middlewares.Use(nil,
-	// 		middlewares.Authorization(strings.Split(os.Getenv(auth), ","))),
-	// 		middlewares.Logger(),
-	// 	),
-	// )
+	// router.Handle("/telegram/", httpSwagger.Handler())
 
 	// server := &http.Server{
 	// 	Addr:    os.Getenv(address),

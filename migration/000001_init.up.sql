@@ -9,5 +9,6 @@ CREATE TABLE IF NOT EXISTS main.users (
 CREATE TABLE IF NOT EXISTS main.versions (
     version         TEXT NOT NULL UNIQUE,
     description     TEXT NOT NULL,
-    description_ru  TEXT
+    description_ru  TEXT,
+    release_date    TEXT
 );
