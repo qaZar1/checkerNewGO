@@ -3,3 +3,5 @@
 .DS_Store
 **/autogen
 **/vendor**
+**/data.txt
+**/data1.txt
