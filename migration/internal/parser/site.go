@@ -54,11 +54,11 @@ func (parser *Parser) parseDescription(html *html.Node, version string) (string,
 }
 
 func (parser *Parser) parseDateRelease(html *html.Node, version string) (string, error) {
-	const regexp1 = `//*[@id][matches(@id, '%s')]`
+	const match = `//*[@id][matches(@id, '%s')]`
 	const regexpStr = `([\d]+-?){3}`
 
 	re := regexp.MustCompile(regexpStr)
-	list, err := htmlquery.Query(html, fmt.Sprintf(regexp1, version))
+	list, err := htmlquery.Query(html, fmt.Sprintf(match, version))
 	if err != nil {
 		return "", err
 	}
