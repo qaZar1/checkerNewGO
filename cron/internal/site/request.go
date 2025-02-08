@@ -1,13 +1,9 @@
-package golang
+package site
 
 import (
-	"bytes"
 	"sync"
-	"time"
 
-	"github.com/antchfx/htmlquery"
 	"github.com/go-resty/resty/v2"
-	"golang.org/x/net/html"
 )
 
 type API struct {
@@ -22,7 +18,7 @@ func NewAPI() *API {
 	}
 }
 
-func (api *API) MakeRequest(url string) (*html.Node, error) {
+func (api *API) MakeRequest(url string) ([]byte, error) {
 	api.mu.Lock()
 
 	defer api.mu.Unlock()
@@ -32,14 +28,5 @@ func (api *API) MakeRequest(url string) (*html.Node, error) {
 		return nil, err
 	}
 
-	body := resp.Body()
-	buff := bytes.NewBuffer(body)
-
-	html, err := htmlquery.Parse(buff)
-	if err != nil {
-		return nil, err
-	}
-
-	time.Sleep(1 * time.Second)
-	return html, nil
+	return resp.Body(), nil
 }
